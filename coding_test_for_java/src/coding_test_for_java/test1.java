@@ -22,34 +22,40 @@ public class test1 {
 	
 	static public int[] solution(int[] arr) {
 		
-		int[] student1 = new int[] {1, 2, 3, 4, 5};
-		int[] student2 = new int[] {2, 1, 2, 3, 2, 4, 2, 5};
-		int[] student3 = new int[] {3, 3, 1, 1, 2, 2, 4, 4, 5, 5};
+//		int[] student1 = new int[] {1, 2, 3, 4, 5};
+//		int[] student2 = new int[] {2, 1, 2, 3, 2, 4, 2, 5};
+//		int[] student3 = new int[] {3, 3, 1, 1, 2, 2, 4, 4, 5, 5};
 		
-		int[][] score = new int[3][];
+		int[][] pattern = {
+				{1,2,3,4,5},
+				{2,1,2,3,2,4,2,5},
+				{3,3,1,1,2,2,4,4,5,5}
+		};
 		
-		score[0] = new int[] {1, 0};
-		score[1] = new int[] {2, 0};
-		score[2] = new int[] {3, 0};
+//		int[][] score = new int[3][];
+		int[] score = new int[3];
 		
 		for (int i = 0; i < arr.length; i ++) {
-			if (arr[i] == student1[i%student1.length]) { score[0][1] += 1;}
-			if (arr[i] == student2[i%student2.length]) { score[1][1] += 1;}
-			if (arr[i] == student3[i%student3.length]) { score[2][1] += 1;}
-		}
-		
-		Arrays.sort(score, (arr1, arr2) -> Integer.compare(arr2[1], arr1[1]));
-		int max_score = score[0][1];
-		
-		ArrayList<Integer> gp = new ArrayList<>();
-		for (int i = 0; i < score.length; i++) {
-			if (score[i][1] == max_score) {
-				gp.add(score[i][0]);
+			for (int j = 0; j < pattern.length; j++) {
+				if (arr[i] == pattern[j][i%pattern[j].length]) {
+					score[j]++;
+				}
 			}
 		}
 		
-		int[] result = gp.stream().mapToInt(Integer::intValue).toArray();
+		// 가장 높은 점수 저장
+		int max_score = Arrays.stream(score).max().getAsInt();
 		
-		return result;
+		ArrayList<Integer> answer = new ArrayList<>();
+		
+ 		// 가장 높은 점수를 가진 수포자들 번호를 찾아 리스트 담음
+		for (int i = 0; i < score.length; i++) {
+			if (score[i] == max_score) {
+				answer.add(i+1);
+			}
+		}
+		System.out.println(Arrays.toString(answer.stream().mapToInt(Integer::intValue).toArray()));
+		// answer는 Integer 객체스트림이므로, mapToInt를 통해 int 기본형 스트림으로 변환한 뒤 배열로 반환한다.
+		return answer.stream().mapToInt(Integer::intValue).toArray();
 	}
 }
