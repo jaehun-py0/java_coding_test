@@ -25,19 +25,56 @@ public class Solution {
 		}
 		
 		System.out.println(Arrays.toString(solution(N, stages)));
+		System.out.println(Arrays.toString(solution2(N, stages)));
 	}
 	
 	public static int[] solution(int N, int[] stages) {
 		
 		HashMap<Integer, Double> fails = new HashMap<>();
 		
+		// 시간 복잡도 N
 		for (int i = 0; i < N; i++) {
 			final int level = i+1;
+			
+			// 시간 복잡도 M
 			long xclear = Arrays.stream(stages).filter(n -> n == level).count();
             long oclear = Arrays.stream(stages).filter(n -> n >= level).count();
             
             fails.put(level, oclear == 0 ? 0 : xclear/(double)oclear);
 		}
+		
+		// -> N.M
+		
+		
+		// 시간 복잡도 NlogN
+		return fails.entrySet().stream().sorted((fail1, fail2) -> fail1.getValue().equals(fail2.getValue()) ? Integer.compare(fail1.getKey(), fail2.getKey()) : Double.compare(fail2.getValue(), fail1.getValue())).mapToInt(HashMap.Entry::getKey).toArray();
+		
+		// Total N*M + NlogN
+	}
+	
+	public static int[] solution2(int N, int[] stages) {
+		int M = stages.length;
+		
+		// 스테이지별 멈춰있는 사람들의 수 -> M
+		int[] stays = new int[N+2];
+		for(int i : stages) {
+			if(i < N+2) stays[i]++;
+		}
+		
+		// 클리어 한 사람들의 수 -> M
+		int[] clears = new int[N+2];
+		for (int i = N; i >= 1; i--) {
+			clears[i] = clears[i+1] + stays[i]; 
+		}
+		
+		HashMap<Integer, Double> fails = new HashMap<>();
+		for(int i = 1; i < N+1; i++) {
+			fails.put(i, clears[i] == 0 ? 0 : stays[i]/(double)clears[i]);
+		}
+		
+		System.out.println(fails);
+		System.out.println(Arrays.toString(stays));
+		System.out.println(Arrays.toString(clears));
 		
 		return fails.entrySet().stream().sorted((fail1, fail2) -> fail1.getValue().equals(fail2.getValue()) ? Integer.compare(fail1.getKey(), fail2.getKey()) : Double.compare(fail2.getValue(), fail1.getValue())).mapToInt(HashMap.Entry::getKey).toArray();
 	}
